@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import "@webcomponents/custom-elements";
+import ContentScript from "./ContentScript";
+import { StylesProvider, jssPreset } from "@material-ui/styles";
+import { create } from "jss";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class ReactExtensionContainer extends HTMLElement {
+  connectedCallback() {
+    const mountPoint = document.createElement("span");
+    mountPoint.id = "reactExtensionPoint";
+
+    const reactRoot = this.attachShadow({ mode: "open" }).appendChild(
+      mountPoint
+    );
+
+    const jss = create({
+      ...jssPreset(),
+      insertionPoint: reactRoot,
+    });
+
+    ReactDOM.render(
+      <StylesProvider jss={jss}>
+        <ContentScript />
+      </StylesProvider>,
+      mountPoint
+    );
+  }
 }
 
-export default App;
+const initWebComponent = function () {
+  customElements.define("react-extension-container", ReactExtensionContainer);
+  window.dis
+  const app = document.createElement("react-extension-container");
+  document.documentElement.appendChild(app);
+};
+
+initWebComponent();
